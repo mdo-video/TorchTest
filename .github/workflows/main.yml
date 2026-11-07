@@ -14,6 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Estrai progetto
+        run: |
+          mkdir src
+          unzip -q TorchTest.zip -d src
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -24,22 +29,22 @@ jobs:
           gradle-version: 8.7
 
       - name: Build debug APK
-        working-directory: TorchTest
+        working-directory: src
         run: gradle assembleDebug --no-daemon
 
       - name: Rename APK
-        working-directory: TorchTest
+        working-directory: src
         run: cp app/build/outputs/apk/debug/app-debug.apk TorchTest.apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: TorchTest
-          path: TorchTest/TorchTest.apk
+          path: src/TorchTest.apk
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
           name: TorchTest (ultima build)
-          files: TorchTest/TorchTest.apk
+          files: src/TorchTest.apk
           make_latest: true
